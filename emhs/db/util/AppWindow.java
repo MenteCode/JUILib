@@ -19,6 +19,8 @@ public class AppWindow {
     private Rectangle renderBounds;
     private boolean doRender;
     private boolean renderAll;
+    private boolean fullscreen;
+    private boolean keepMaximized;
 
     /*
 TODO:
@@ -73,6 +75,10 @@ Foreach UIComponent:
             public void windowClosing(WindowEvent e) {
                 frame.dispose();
                 if (exitOnClose) System.exit(0);
+            }
+
+            public void windowDeactivated(WindowEvent e) {
+                if(keepMaximized) setFullscreen(fullscreen);
             }
         });
 
@@ -149,6 +155,8 @@ Foreach UIComponent:
     }
 
     public void setFullscreen(boolean fullscreen) {
+        this.fullscreen = fullscreen;
+
         frame.dispose();
         frame.setUndecorated(fullscreen);
         frame.setVisible(true);
@@ -163,6 +171,10 @@ Foreach UIComponent:
         frame.setUndecorated(!decorated);
         frame.setVisible(true);
         frame.toFront();
+    }
+
+    public void keepMaximized(boolean maximized) {
+        this.keepMaximized = maximized;
     }
 
     private void initCanvasListeners() {
