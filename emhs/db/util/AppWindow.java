@@ -1,7 +1,6 @@
 package emhs.db.util;
 
 import emhs.db.components.UIComponent;
-import javafx.scene.paint.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +11,7 @@ import java.awt.image.BufferedImage;
 import java.util.TimerTask;
 
 public class AppWindow {
-    protected JFrame frame;
+    private JFrame frame;
     private JPanel panel;
     private UISurface appUI;
     private UIComponent frameComp;
@@ -30,7 +29,21 @@ Foreach UIComponent:
  */
 
     public AppWindow(final String title, final int width, final int height, final boolean exitOnClose) {
-        frame = new JFrame(title);
+        frame = new JFrame(title) {
+            @Override
+            protected void processWindowEvent(WindowEvent e) {
+                if (e.getID() == WindowEvent.WINDOW_DEACTIVATED
+                        || e.getID() == WindowEvent.WINDOW_ICONIFIED) {
+                    return;
+                } else if (e.getID() == WindowEvent.WINDOW_ACTIVATED) {
+                    this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    this.toFront();
+                }
+
+                super.processWindowEvent(e);
+            }
+        };
+
         frame.setFocusable(true);
         frame.setLayout(new BorderLayout());
         frame.addNotify();
@@ -68,8 +81,6 @@ Foreach UIComponent:
         panel.requestFocusInWindow();
 
         frame.getContentPane().add(panel);
-
-        frame.setVisible(true);
 
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -159,7 +170,6 @@ Foreach UIComponent:
 
         frame.dispose();
         frame.setUndecorated(fullscreen);
-        frame.setVisible(true);
 
         frame.getGraphicsConfiguration().getDevice().setFullScreenWindow(frame);
 
@@ -171,6 +181,10 @@ Foreach UIComponent:
         frame.setUndecorated(!decorated);
         frame.setVisible(true);
         frame.toFront();
+    }
+
+    public void setVisible(boolean visible) {
+        frame.setVisible(visible);
     }
 
     public void keepMaximized(boolean maximized) {
